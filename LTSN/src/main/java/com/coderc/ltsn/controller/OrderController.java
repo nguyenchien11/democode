@@ -101,4 +101,15 @@ public class OrderController {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(listOrderResponse, HttpStatus.OK);
     }
+
+    @PostMapping("/update/{id}")
+    public void confirmOrder(@PathVariable long id){
+        var order = orderRepository.findById(id);
+        for (var o : order.get().getOrderdetails()) {
+            var product = o.getProduct();
+            product.setQuantity(o.getProduct().getQuantity() - o.getQuantity());
+            productRepository.save(product);
+        }
+        order.get().setStatus("Order is delivering");
+    }
 }
