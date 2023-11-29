@@ -5,6 +5,8 @@ import com.coderc.ltsn.models.request.EditProductRequest;
 import com.coderc.ltsn.models.response.AddProductResponse;
 import com.coderc.ltsn.repository.ProductRepository;
 import com.coderc.ltsn.service.ProductService;
+import com.coderc.ltsn.service.RedisService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,9 @@ public class ProductController {
     private final ModelMapper modelMapper;
 
     @Autowired
+    private  RedisService redisService;
+
+    @Autowired
     public ProductController(ProductService productService, ModelMapper modelMapper, ProductRepository productRepository) {
         this.productService = productService;
         this.modelMapper = modelMapper;
@@ -41,8 +46,21 @@ public class ProductController {
         return new ResponseEntity<>(listProduct, HttpStatus.OK);
     }
 
+    @GetMapping("/getProductByName")
+    public ResponseEntity<List<AddProductResponse>> getProductByName(String name) throws JsonProcessingException {
+        var list_product = redisService.getAllproduct(name);
+        if(list_product != null){
+            return new ResponseEntity<>(list_product, HttpStatus.OK);
+        }
+        var listProduct = productService.getAll().stream()
+                .map(product -> modelMapper.map(product , AddProductResponse.class))
+                .collect(Collectors.toList());
+        redisService.saveCache(listProduct,name);
+        return new ResponseEntity<>(listProduct, HttpStatus.OK);
+    }
+
     @PostMapping("/add")
-    public ResponseEntity<AddProductResponse> addProduct(@ModelAttribute AddProductRequest request, @RequestPart("image") MultipartFile file) throws IOException {
+    public ResponseEntity<?> addProduct(@ModelAttribute AddProductRequest request, @RequestPart("image") MultipartFile file) throws IOException {
         var product = productService.add(request,file);
         var productResponse = modelMapper.map(product, AddProductResponse.class);
 

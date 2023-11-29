@@ -21,6 +21,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(ProductListener.class)
 public class Product implements Serializable {
 
     @Id
@@ -52,4 +53,67 @@ public class Product implements Serializable {
             property = "id")
     private List<OrderDetail> orderdetails = new ArrayList<>();
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public List<ProductCart> getProductCarts() {
+        return productCarts;
+    }
+
+    public void setProductCarts(List<ProductCart> productCarts) {
+        this.productCarts = productCarts;
+    }
+
+    public List<OrderDetail> getOrderdetails() {
+        return orderdetails;
+    }
+
+    public void setOrderdetails(List<OrderDetail> orderdetails) {
+        this.orderdetails = orderdetails;
+    }
 }

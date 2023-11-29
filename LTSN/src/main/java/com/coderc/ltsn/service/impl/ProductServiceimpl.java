@@ -41,7 +41,7 @@ public class ProductServiceimpl implements ProductService {
             e.printStackTrace();
         }
 
-        return categoryRepository.findByName(request.getCateName())
+        return categoryRepository.findById(request.getCateId())
                 .map(category -> {
                     var newProduct = new Product();
                     newProduct.setName(request.getName());
